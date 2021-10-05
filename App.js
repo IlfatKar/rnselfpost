@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useState } from 'react'
-import { Text, View } from 'react-native'
-import { AppLoading } from 'expo'
+import AppLoading from 'expo-app-loading'
 import { bootstrap } from './src/bootstrap'
+import { NavigationContainer } from '@react-navigation/native'
+import { AppNavigation } from './src/navigation/AppNavigation'
 
 export default function App() {
   const [isReady, setIsReady] = useState(false)
@@ -16,9 +17,9 @@ export default function App() {
     )
   }
   return (
-    <View>
+    <NavigationContainer>
       <StatusBar style='auto' />
-      <Text>1</Text>
-    </View>
+      <AppNavigation />
+    </NavigationContainer>
   )
 }
