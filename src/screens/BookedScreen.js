@@ -1,10 +1,21 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet, FlatList } from 'react-native'
+import { Post } from '../components/Post'
+import { DATA } from '../data'
 
-export const BookedScreen = ({}) => {
+export const BookedScreen = ({ navigation }) => {
   return (
-    <View style={styles.center}>
-      <Text>BookedScreen</Text>
+    <View style={styles.wrapper}>
+      <FlatList
+        data={DATA.filter((p) => p.booked)}
+        keyExtractor={({ id }) => id.toString()}
+        renderItem={({ item }) => (
+          <Post
+            post={item}
+            onOpen={({ date, id, booked }) => navigation.navigate('Post', { booked, date, postId: id })}
+          />
+        )}
+      />
     </View>
   )
 }
@@ -12,7 +23,6 @@ export const BookedScreen = ({}) => {
 const styles = StyleSheet.create({
   center: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 10,
   },
 })

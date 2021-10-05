@@ -1,5 +1,4 @@
 import React from 'react'
-import { Platform } from 'react-native'
 import { createStackNavigator, HeaderStyleInterpolators } from '@react-navigation/stack'
 import { MainScreen } from '../screens/MainScreen'
 import { BookedScreen } from '../screens/BookedScreen'
@@ -8,60 +7,97 @@ import { AboutScreen } from '../screens/AboutScreen'
 import { PostScreen } from '../screens/PostScreen'
 import { THEME } from '../theme'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { AppHeaderIcon } from '../components/AppHeaderIcon'
+import { Ionicons } from '@expo/vector-icons'
 
-const Stack = createStackNavigator()
+const Posts = createStackNavigator()
+const Booked = createStackNavigator()
+const Tab = createBottomTabNavigator()
 
-export const AppNavigation = () => {
+const screenOptions = {
+  headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
+  headerMode: 'float',
+  headerTintColor: THEME.MAIN_COLOR,
+  headerStyle: {
+    height: 80,
+    backgroundColor: '#fff',
+  },
+}
+const postsScreens = (Screen, allPostsScreen) => (
+  <>
+    <Screen
+      name='Main'
+      component={allPostsScreen}
+      options={{
+        title: 'Мой блог',
+        headerRight: () => (
+          <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+            <Item title='Take photo' iconName='ios-camera' onPress={() => console.log('take photo')} />
+          </HeaderButtons>
+        ),
+        headerLeft: () => (
+          <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+            <Item title='Menu' iconName='ios-menu' onPress={() => console.log('menu')} />
+          </HeaderButtons>
+        ),
+      }}
+    />
+    <Screen
+      name='Post'
+      component={PostScreen}
+      options={({ route }) => ({
+        title: `Пост от ${new Date(route.params.date).toLocaleDateString()}`,
+        headerRight: () => (
+          <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+            <Item
+              title='Fav'
+              iconName={route.params.booked ? 'star' : 'star-outline'}
+              onPress={() => console.log('fav')}
+            />
+          </HeaderButtons>
+        ),
+      })}
+    />
+  </>
+)
+
+const createNavigation = (Navigator, name, allPostsScreen) => {
   return (
-    <Stack.Navigator
-      initialRouteName='Main'
+    <Navigator initialRouteName={name} screenOptions={screenOptions}>
+      {postsScreens(Posts.Screen, allPostsScreen)}
+    </Navigator>
+  )
+}
+
+const PostsNavigation = () => createNavigation(Posts.Navigator, 'Main', MainScreen)
+
+const BookedNavigation = () => createNavigation(Booked.Navigator, 'Booked', BookedScreen)
+
+export const TabNavigation = () => {
+  return (
+    <Tab.Navigator
       screenOptions={{
-        headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
-        headerMode: 'float',
-        headerTintColor: Platform.OS === 'android' ? '#fff' : THEME.MAIN_COLOR,
-        headerStyle: {
-          height: 80,
-          backgroundColor: Platform.OS === 'android' ? THEME.MAIN_COLOR : '#fff',
-        },
+        tabBarActiveTintColor: THEME.MAIN_COLOR,
+        headerShown: false,
       }}
     >
-      <Stack.Screen
-        name='Main'
-        component={MainScreen}
+      <Tab.Screen
+        name='TabPosts'
+        component={PostsNavigation}
         options={{
-          title: 'Мой блог',
-          headerRight: () => (
-            <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-              <Item title='Take photo' iconName='ios-camera' onPress={() => console.log('take photo')} />
-            </HeaderButtons>
-          ),
-          headerLeft: () => (
-            <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-              <Item title='Menu' iconName='ios-menu' onPress={() => console.log('menu')} />
-            </HeaderButtons>
-          ),
+          tabBarLabel: 'Все',
+          tabBarIcon: (info) => <Ionicons name='albums-outline' size={24} color={info.color} />,
         }}
       />
-      <Stack.Screen name='Booked' component={BookedScreen} options={{ title: 'Мой блог' }} />
-      <Stack.Screen name='Create' component={CreateScreen} options={{ title: 'Мой блог' }} />
-      <Stack.Screen name='About' component={AboutScreen} options={{ title: 'Мой блог' }} />
-      <Stack.Screen
-        name='Post'
-        component={PostScreen}
-        options={({ route }) => ({
-          title: `Пост от ${new Date(route.params.date).toLocaleDateString()}`,
-          headerRight: () => (
-            <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-              <Item
-                title='Fav'
-                iconName={route.params.booked ? 'star' : 'star-outline'}
-                onPress={() => console.log('fav')}
-              />
-            </HeaderButtons>
-          ),
-        })}
+      <Tab.Screen
+        name='TabBooked'
+        component={BookedNavigation}
+        options={{
+          tabBarLabel: 'Избранное',
+          tabBarIcon: (info) => <Ionicons name='star-outline' size={24} color={info.color} />,
+        }}
       />
-    </Stack.Navigator>
+    </Tab.Navigator>
   )
 }
