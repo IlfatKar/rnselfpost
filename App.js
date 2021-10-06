@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import AppLoading from 'expo-app-loading'
 import { bootstrap } from './src/bootstrap'
 import { NavigationContainer } from '@react-navigation/native'
-import { AppNavigation, TabNavigation } from './src/navigation/AppNavigation'
+import { DrawerNavigation } from './src/navigation/AppNavigation'
 
 export default function App() {
   const [isReady, setIsReady] = useState(false)
@@ -19,8 +19,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <StatusBar style='auto' />
-      {/* <AppNavigation /> */}
-      <TabNavigation />
+      <DrawerNavigation />
     </NavigationContainer>
   )
 }

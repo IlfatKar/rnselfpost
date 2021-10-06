@@ -1,5 +1,6 @@
 import React from 'react'
 import { createStackNavigator, HeaderStyleInterpolators } from '@react-navigation/stack'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import { MainScreen } from '../screens/MainScreen'
 import { BookedScreen } from '../screens/BookedScreen'
 import { CreateScreen } from '../screens/CreateScreen'
@@ -14,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons'
 const Posts = createStackNavigator()
 const Booked = createStackNavigator()
 const Tab = createBottomTabNavigator()
+const Drawer = createDrawerNavigator()
 
 const screenOptions = {
   headerStyleInterpolator: HeaderStyleInterpolators.forUIKit,
@@ -29,19 +31,19 @@ const postsScreens = (Screen, allPostsScreen) => (
     <Screen
       name='Main'
       component={allPostsScreen}
-      options={{
+      options={({ navigation }) => ({
         title: 'Мой блог',
         headerRight: () => (
           <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-            <Item title='Take photo' iconName='ios-camera' onPress={() => console.log('take photo')} />
+            <Item title='Take photo' iconName='ios-camera' onPress={() => navigation.navigate('Create')} />
           </HeaderButtons>
         ),
         headerLeft: () => (
           <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-            <Item title='Menu' iconName='ios-menu' onPress={() => console.log('menu')} />
+            <Item title='Menu' iconName='ios-menu' onPress={() => navigation.openDrawer()} />
           </HeaderButtons>
         ),
-      }}
+      })}
     />
     <Screen
       name='Post'
@@ -69,12 +71,11 @@ const createNavigation = (Navigator, name, allPostsScreen) => {
     </Navigator>
   )
 }
-
 const PostsNavigation = () => createNavigation(Posts.Navigator, 'Main', MainScreen)
 
 const BookedNavigation = () => createNavigation(Booked.Navigator, 'Booked', BookedScreen)
 
-export const TabNavigation = () => {
+const TabNavigation = () => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -99,5 +100,49 @@ export const TabNavigation = () => {
         }}
       />
     </Tab.Navigator>
+  )
+}
+
+export const DrawerNavigation = () => {
+  return (
+    <Drawer.Navigator
+      initialRouteName='Tabs'
+      screenOptions={{
+        drawerActiveTintColor: '#fff',
+        drawerActiveBackgroundColor: THEME.MAIN_COLOR,
+        headerShown: false,
+        headerMode: 'float',
+        headerTintColor: THEME.MAIN_COLOR,
+        headerStyle: {
+          height: 80,
+          backgroundColor: '#fff',
+        },
+        drawerLabelStyle: {
+          fontFamily: 'open-bold',
+        },
+        drawerItemStyle: {
+          marginHorizontal: 0,
+          borderRadius: 0,
+        },
+      }}
+    >
+      <Drawer.Screen
+        name='Tabs'
+        component={TabNavigation}
+        options={{
+          drawerLabel: 'Посты',
+        }}
+      />
+      <Drawer.Screen
+        name='Create'
+        component={CreateScreen}
+        options={{ drawerLabel: 'Новый пост', headerShown: true, title: 'Новый пост' }}
+      />
+      <Drawer.Screen
+        name='About'
+        component={AboutScreen}
+        options={{ drawerLabel: 'О приложении', title: 'О приложении', headerShown: true }}
+      />
+    </Drawer.Navigator>
   )
 }
