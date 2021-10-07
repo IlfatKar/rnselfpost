@@ -48,18 +48,21 @@ const postsScreens = (Screen, allPostsScreen) => (
     <Screen
       name='Post'
       component={PostScreen}
-      options={({ route }) => ({
-        title: `Пост от ${new Date(route.params.date).toLocaleDateString()}`,
-        headerRight: () => (
-          <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
-            <Item
-              title='Fav'
-              iconName={route.params.booked ? 'star' : 'star-outline'}
-              onPress={() => console.log('fav')}
-            />
-          </HeaderButtons>
-        ),
-      })}
+      options={({ route }) => {
+        const toggleHandler = route.params.toggleHandler
+        return {
+          title: `Пост от ${new Date(route.params.date).toLocaleDateString()}`,
+          headerRight: () => (
+            <HeaderButtons HeaderButtonComponent={AppHeaderIcon}>
+              <Item
+                title='Fav'
+                iconName={route.params.booked ? 'star' : 'star-outline'}
+                onPress={toggleHandler}
+              />
+            </HeaderButtons>
+          ),
+        }
+      }}
     />
   </>
 )

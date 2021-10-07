@@ -4,6 +4,8 @@ import AppLoading from 'expo-app-loading'
 import { bootstrap } from './src/bootstrap'
 import { NavigationContainer } from '@react-navigation/native'
 import { DrawerNavigation } from './src/navigation/AppNavigation'
+import { Provider } from 'react-redux'
+import { store } from './src/store/store'
 
 export default function App() {
   const [isReady, setIsReady] = useState(false)
@@ -17,9 +19,11 @@ export default function App() {
     )
   }
   return (
-    <NavigationContainer>
-      <StatusBar style='auto' />
-      <DrawerNavigation />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <StatusBar style='auto' />
+        <DrawerNavigation />
+      </NavigationContainer>
+    </Provider>
   )
 }
